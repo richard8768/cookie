@@ -18,9 +18,9 @@ use HyperfExt\Cookie\Contract\CookieJarInterface;
 class CookieJarProxy extends CookieJar
 {
     /**
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var ConfigInterface
      */
-    protected $config;
+    protected ConfigInterface $config;
 
     public function __construct(ConfigInterface $config)
     {
@@ -32,7 +32,7 @@ class CookieJarProxy extends CookieJar
         return $this->getCookieJar()->hasQueued($key, $path);
     }
 
-    public function queued(string $key, $default = null, ?string $path = null): ?Cookie
+    public function queued(string $key, mixed $default = null, ?string $path = null): ?Cookie
     {
         return $this->getCookieJar()->queued($key, $default, $path);
     }
@@ -47,7 +47,7 @@ class CookieJarProxy extends CookieJar
         $this->getCookieJar()->unqueue($name, $path);
     }
 
-    public function setDefaultPathAndDomain(string $path, string $domain, bool $secure = false, ?string $sameSite = null)
+    public function setDefaultPathAndDomain(string $path, string $domain, bool $secure = false, ?string $sameSite = null): CookieJarInterface
     {
         return $this->getCookieJar()->setDefaultPathAndDomain($path, $domain, $secure, $sameSite);
     }
@@ -57,7 +57,7 @@ class CookieJarProxy extends CookieJar
         return $this->getCookieJar()->getQueuedCookies();
     }
 
-    public function getPathAndDomain(?string $path = null, ?string $domain = null, ?bool $secure = null, ?string $sameSite = null)
+    public function getPathAndDomain(?string $path = null, ?string $domain = null, ?bool $secure = null, ?string $sameSite = null): array
     {
         return $this->getCookieJar()->getPathAndDomain($path, $domain, $secure, $sameSite);
     }

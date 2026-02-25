@@ -20,14 +20,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 class QueuedCookieMiddleware implements MiddlewareInterface
 {
     /**
-     * @var \HyperfExt\Cookie\Contract\CookieJarInterface
+     * @var CookieJarInterface
      */
-    private $cookieJar;
+    private CookieJarInterface $cookieJar;
 
     /**
      * @var ConfigInterface
      */
-    private $config;
+    private ConfigInterface $config;
 
     public function __construct(CookieJarInterface $cookieJar, ConfigInterface $config)
     {

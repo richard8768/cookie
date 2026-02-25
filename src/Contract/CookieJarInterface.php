@@ -17,23 +17,43 @@ interface CookieJarInterface
     /**
      * Create a new cookie instance.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param string $name
+     * @param string $value
+     * @param int $minutes
+     * @param string|null $path
+     * @param string|null $domain
+     * @param bool|null $secure
+     * @param bool $httpOnly
+     * @param bool $raw
+     * @param string|null $sameSite
+     * @return Cookie
      */
-    public function make(string $name, string $value, int $minutes = 0, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null);
+    public function make(string $name, string $value, int $minutes = 0, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null): Cookie;
 
     /**
      * Create a cookie that lasts "forever" (five years).
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param string $name
+     * @param string $value
+     * @param string|null $path
+     * @param string|null $domain
+     * @param bool|null $secure
+     * @param bool $httpOnly
+     * @param bool $raw
+     * @param string|null $sameSite
+     * @return Cookie
      */
-    public function forever(string $name, string $value, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null);
+    public function forever(string $name, string $value, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null): Cookie;
 
     /**
      * Expire the given cookie.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param string $name
+     * @param string|null $path
+     * @param string|null $domain
+     * @return Cookie
      */
-    public function forget(string $name, ?string $path = null, ?string $domain = null);
+    public function forget(string $name, ?string $path = null, ?string $domain = null): Cookie;
 
     /**
      * Queue a cookie to send with the next response.
@@ -48,7 +68,7 @@ interface CookieJarInterface
     /**
      * Get the cookies which have been queued for the next request.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie[]
+     * @return Cookie[]
      */
     public function getQueuedCookies(): array;
 }

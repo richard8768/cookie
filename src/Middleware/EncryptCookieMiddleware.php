@@ -13,6 +13,7 @@ namespace HyperfExt\Cookie\Middleware;
 use Hyperf\HttpMessage\Cookie\Cookie;
 use Hyperf\Collection\Arr;
 use HyperfExt\Cookie\CookieValuePrefix;
+use HyperfExt\Encryption\Contract\AsymmetricDriverInterface;
 use HyperfExt\Encryption\Contract\EncryptionInterface;
 use HyperfExt\Encryption\Contract\SymmetricDriverInterface;
 use HyperfExt\Encryption\Exception\DecryptException;
@@ -25,23 +26,23 @@ class EncryptCookieMiddleware
     /**
      * The encrypter instance.
      *
-     * @var \HyperfExt\Encryption\Contract\AsymmetricDriverInterface|\HyperfExt\Encryption\Contract\SymmetricDriverInterface
+     * @var AsymmetricDriverInterface|SymmetricDriverInterface
      */
-    protected $encrypter;
+    protected AsymmetricDriverInterface|SymmetricDriverInterface $encrypter;
 
     /**
      * The names of the cookies that should not be encrypted.
      *
      * @var array
      */
-    protected $except = [];
+    protected array $except = [];
 
     /**
      * Indicates if cookies should be serialized.
      *
      * @var bool
      */
-    protected static $serialize = false;
+    protected static bool $serialize = false;
 
     /**
      * Create a new CookieGuard instance.
@@ -56,13 +57,16 @@ class EncryptCookieMiddleware
      *
      * @param array|string $name
      */
-    public function disableFor($name)
+    public function disableFor(array|string $name): void
     {
         $this->except = array_merge($this->except, (array) $name);
     }
 
     /**
      * Handle an incoming request.
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -71,6 +75,8 @@ class EncryptCookieMiddleware
 
     /**
      * Determine whether encryption has been disabled for the given cookie.
+     * @param string $name
+     * @return bool
      */
     public function isDisabled(string $name): bool
     {
@@ -88,9 +94,10 @@ class EncryptCookieMiddleware
     /**
      * Decrypt the cookies on the request.
      *
-     * @return \Psr\Http\Message\ServerRequestInterface
+     * @param ServerRequestInterface $request
+     * @return ServerRequestInterface
      */
-    protected function decrypt(ServerRequestInterface $request)
+    protected function decrypt(ServerRequestInterface $request): ServerRequestInterface
     {
         $cookies = [];
 
@@ -121,11 +128,12 @@ class EncryptCookieMiddleware
     /**
      * Decrypt the given cookie and return the value.
      *
+     * @param string $name
      * @param array|string $cookie
      *
      * @return array|string
      */
-    protected function decryptCookie(string $name, $cookie)
+    protected function decryptCookie(string $name, $cookie): array|string
     {
         return is_array($cookie)
             ? $this->decryptArray($cookie)
@@ -135,9 +143,10 @@ class EncryptCookieMiddleware
     /**
      * Decrypt an array based cookie.
      *
+     * @param array $cookie
      * @return array
      */
-    protected function decryptArray(array $cookie)
+    protected function decryptArray(array $cookie): array
     {
         $decrypted = [];
 
@@ -153,9 +162,10 @@ class EncryptCookieMiddleware
     /**
      * Encrypt the cookies on an outgoing response.
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
-    protected function encrypt(ResponseInterface $response)
+    protected function encrypt(ResponseInterface $response): ResponseInterface
     {
         $cookies = Arr::flatten($response->getCookies());
         foreach ($cookies as $cookie) {
@@ -183,9 +193,11 @@ class EncryptCookieMiddleware
     /**
      * Duplicate a cookie with a new value.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param Cookie $cookie
+     * @param string $value
+     * @return Cookie
      */
-    protected function duplicate(Cookie $cookie, string $value)
+    protected function duplicate(Cookie $cookie, string $value): Cookie
     {
         return new Cookie(
             $cookie->getName(),

@@ -26,38 +26,48 @@ class CookieJar implements CookieJarInterface
      *
      * @var string
      */
-    protected $path = '/';
+    protected string $path = '/';
 
     /**
      * The default domain (if specified).
      *
      * @var string
      */
-    protected $domain = '';
+    protected string $domain = '';
 
     /**
      * The default secure setting (defaults to null).
      *
      * @var bool
      */
-    protected $secure = false;
+    protected bool $secure = false;
 
     /**
      * The default SameSite option (defaults to lax).
      *
      * @var string
      */
-    protected $sameSite = 'lax';
+    protected string $sameSite = 'lax';
 
     /**
-     * All of the cookies queued for sending.
+     * All the cookies queued for sending.
      *
-     * @var \Hyperf\HttpMessage\Cookie\Cookie[]
+     * @var Cookie[]
      */
-    protected $queued = [];
+    protected array $queued = [];
 
     /**
      * Create a new cookie instance.
+     * @param string $name
+     * @param string $value
+     * @param int $minutes
+     * @param string|null $path
+     * @param string|null $domain
+     * @param bool|null $secure
+     * @param bool $httpOnly
+     * @param bool $raw
+     * @param string|null $sameSite
+     * @return Cookie
      */
     public function make(string $name, string $value, int $minutes = 0, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null): Cookie
     {
@@ -71,9 +81,17 @@ class CookieJar implements CookieJarInterface
     /**
      * Create a cookie that lasts "forever" (five years).
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param string $name
+     * @param string $value
+     * @param string|null $path
+     * @param string|null $domain
+     * @param bool|null $secure
+     * @param bool $httpOnly
+     * @param bool $raw
+     * @param string|null $sameSite
+     * @return Cookie
      */
-    public function forever(string $name, string $value, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null)
+    public function forever(string $name, string $value, ?string $path = null, ?string $domain = null, ?bool $secure = null, bool $httpOnly = true, bool $raw = false, ?string $sameSite = null): Cookie
     {
         return $this->make($name, $value, 2628000, $path, $domain, $secure, $httpOnly, $raw, $sameSite);
     }
@@ -81,15 +99,21 @@ class CookieJar implements CookieJarInterface
     /**
      * Expire the given cookie.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie
+     * @param string $name
+     * @param string|null $path
+     * @param string|null $domain
+     * @return Cookie
      */
-    public function forget(string $name, ?string $path = null, ?string $domain = null)
+    public function forget(string $name, ?string $path = null, ?string $domain = null): Cookie
     {
         return $this->make($name, '', -2628000, $path, $domain);
     }
 
     /**
      * Determine if a cookie has been queued.
+     * @param string $key
+     * @param string|null $path
+     * @return bool
      */
     public function hasQueued(string $key, ?string $path = null): bool
     {
@@ -98,10 +122,12 @@ class CookieJar implements CookieJarInterface
 
     /**
      * Get a queued cookie instance.
-     *
-     * @param mixed $default
+     * @param string $key
+     * @param mixed|null $default
+     * @param string|null $path
+     * @return Cookie|null
      */
-    public function queued(string $key, $default = null, ?string $path = null): ?Cookie
+    public function queued(string $key, mixed $default = null, ?string $path = null): ?Cookie
     {
         $queued = Arr::get($this->queued, $key, $default);
 
@@ -114,6 +140,8 @@ class CookieJar implements CookieJarInterface
 
     /**
      * Queue a cookie to send with the next response.
+     * @param Cookie $cookie
+     * @return void
      */
     public function queue(Cookie $cookie): void
     {
@@ -126,6 +154,9 @@ class CookieJar implements CookieJarInterface
 
     /**
      * Remove a cookie from the queue.
+     * @param string $name
+     * @param string|null $path
+     * @return void
      */
     public function unqueue(string $name, ?string $path = null): void
     {
@@ -144,10 +175,13 @@ class CookieJar implements CookieJarInterface
 
     /**
      * Set the default path and domain for the jar.
-     *
-     * @return $this
+     * @param string $path
+     * @param string $domain
+     * @param bool $secure
+     * @param string|null $sameSite
+     * @return CookieJarInterface
      */
-    public function setDefaultPathAndDomain(string $path, string $domain, bool $secure = false, ?string $sameSite = null)
+    public function setDefaultPathAndDomain(string $path, string $domain, bool $secure = false, ?string $sameSite = null): CookieJarInterface
     {
         [$this->path, $this->domain, $this->secure, $this->sameSite] = [$path, $domain, $secure, $sameSite];
 
@@ -157,7 +191,7 @@ class CookieJar implements CookieJarInterface
     /**
      * Get the cookies which have been queued for the next request.
      *
-     * @return \Hyperf\HttpMessage\Cookie\Cookie[]
+     * @return Cookie[]
      */
     public function getQueuedCookies(): array
     {
@@ -167,9 +201,13 @@ class CookieJar implements CookieJarInterface
     /**
      * Get the path and domain, or the default values.
      *
+     * @param string|null $path
+     * @param string|null $domain
+     * @param bool|null $secure
+     * @param string|null $sameSite
      * @return array
      */
-    public function getPathAndDomain(?string $path = null, ?string $domain = null, ?bool $secure = null, ?string $sameSite = null)
+    public function getPathAndDomain(?string $path = null, ?string $domain = null, ?bool $secure = null, ?string $sameSite = null): array
     {
         return [$path ?: $this->path, $domain ?: $this->domain, is_bool($secure) ? $secure : $this->secure, $sameSite ?: $this->sameSite];
     }
