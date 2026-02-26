@@ -11,5 +11,5 @@ declare(strict_types=1);
 return [
     'path' => env('COOKIE_PATH', '/'),
     'domain' => env('COOKIE_DOMAIN', ''),
-    'same_site' => env('COOKIE_SANE_SITE', 'lax'),
+    'same_site' => env('COOKIE_SAME_SITE', 'lax'),
 ];
