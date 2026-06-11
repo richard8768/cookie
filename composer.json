@@ -35,7 +35,7 @@
         "hyperf/framework": "3.2.*",
         "hyperf/support": "^3.2",
         "hyperf/helper": "^3.2",
-        "richard8768/encryption": "dev-dev-richard"
+        "richard8768/encryption": "1.3"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.94",
@@ -54,12 +54,6 @@
     "extra": {
         "hyperf": {
             "config": "HyperfExt\\Cookie\\ConfigProvider"
-        }
-    },
-    "repositories": {
-        "richard8768/encryption": {
-            "type": "path",
-            "url": "../hyperf-encryption"
         }
     }
 }
